@@ -28,6 +28,7 @@ pipeline {
                 // Build Docker image using Dockerfile in repository
                 script {
                     try {
+                        // Explicitly tag the image during build
                         docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                     } catch (Exception e) {
                         echo "Failed to build Docker image: ${e.message}"
@@ -43,10 +44,13 @@ pipeline {
                 script {
                     try {
                         withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-			    echo "Docker Username: $DOCKER_USERNAME"
+                            // Add debug output
+                            echo "Docker Username: $DOCKER_USERNAME"
                             echo "Docker Image Name: $DOCKER_IMAGE_NAME"
+                            
+                            // Push the Docker image
                             docker.withRegistry('https://docker.io') {
-                                docker.image(DOCKER_IMAGE_NAME).push(IMAGE_TAG)
+                                docker.image("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}").push()
                             }
                         }
                     } catch (Exception e) {
@@ -58,4 +62,3 @@ pipeline {
         }
     }
 }
-
