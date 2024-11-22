@@ -43,7 +43,8 @@ pipeline {
                 // Log in to DockerHub and push Docker image
                 script {
                     try {
-                        withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        //withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+			docker.withRegistry('https://registry-1.docker.io/v2/', 'my-docker-hub-credentials-id') {
                             // Add debug output
                             echo "Docker Username: $DOCKER_USERNAME"
                             echo "Docker Image Name: $DOCKER_IMAGE_NAME"
