@@ -28,7 +28,7 @@ pipeline {
                 // Build Docker image using Dockerfile in repository
                 script {
                     try {
-                        docker.build(DOCKER_IMAGE_NAME)
+                        docker.build("${DOCKER_IMAGE_NAME}:${IMAGE_TAG}")
                     } catch (Exception e) {
                         echo "Failed to build Docker image: ${e.message}"
                         error "Failed to build Docker image"
@@ -43,7 +43,9 @@ pipeline {
                 script {
                     try {
                         withCredentials([usernamePassword(credentialsId: 'my-docker-hub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                            docker.withRegistry('https://index.docker.io/v1/') {
+			    echo "Docker Username: $DOCKER_USERNAME"
+                            echo "Docker Image Name: $DOCKER_IMAGE_NAME"
+                            docker.withRegistry('https://docker.io') {
                                 docker.image(DOCKER_IMAGE_NAME).push(IMAGE_TAG)
                             }
                         }
